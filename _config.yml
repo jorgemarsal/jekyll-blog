@@ -1,0 +1,11 @@
+# Site settings
+title: Jorge Martinez
+email: jorge.marsal@gmail.com
+description:
+baseurl: "/blog" # the subpath of your site, e.g. /blog/
+url: "http://jorgemarsal.github.io" # the base hostname & protocol for your site
+twitter_username: jorgemarsal
+github_username:  jorgemarsal
+
+# Build settings
+markdown: kramdown
