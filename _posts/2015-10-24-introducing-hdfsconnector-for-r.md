@@ -44,13 +44,13 @@ To get the best performance we have an I/O thread that pre-fetches blocks while 
 
 #### Split producer
 Assembles splits (lines in CSV), stripes in ORC, etc. For that it might need to read one or more blocks.
-We have 2 flavors `DelimiterSplitProducer` and `OffsetSplitProducer.
+We have 2 flavors `DelimiterSplitProducer` and `OffsetSplitProducer`.
 
 In CSV lines are usually determined by a newline character (\n). In this case we use the `DelimiterSplitProducer` to extract the lines. This is quite slow as we have to look at every byte to detect newline characters. Other formats (such as ORC) include the split boundaries in the metadata and we can extract the splits directly using the `OffsetSplitProducer`.
 
 An additional complication for CSV files is that the offset from which we start reading may not correspond to the beginning of the line (actually this is the normal case). To handle this we have to backtrack one character and then skip that incomplete line. The discarded line will be processed by the executor that's working on the previous chunk.
 
-To understand this better let's use an example. Suppose executor one is assigned range [0, 6] and executor 2  range [6,12]. Lines correspond to ranges [0,4),[4,8) and [8,12). Executor 1 will process both lines 1 and 2. Even though the range finishes at offset 6 it will continue until the full 2nd line is consumed. Executor 2 in turn will discard the incomplete line and only process line 3.
+To understand this better let's use an example. Suppose executor 1 is assigned range [0, 6] and executor 2  range [6,12]. Lines correspond to ranges [0,4),[4,8) and [8,12). Executor 1 will process both lines 1 and 2. Even though the range finishes at offset 6 it will continue until the full 2nd line is consumed. Executor 2 in turn will discard the incomplete line and only process line 3.
 
 ![CSV line splitting](/blog/assets/hdfsconnector/csv_lines.png)
 
@@ -86,6 +86,6 @@ In the graph we present the results of loading a 64MB CSV file with a single mac
 ### Conclusion
 This new connector allows R users to read files from HDFS. It can parallelize file loads across cores and machines which results in great performance.
 
-We offer this functionality as part of [Distributed R](https://github.com/vertica/distributedr) (supporting distributed operation) and also as an individual package [dataconnector](https://github.com/vertica/r-dataconnector).
+We offer this functionality as part of [Distributed R](https://github.com/vertica/distributedr) (supporting distributed operation) and also as an individual package named [dataconnector](https://github.com/vertica/r-dataconnector).
 
 The connector is open-source and we encourage feedback and contributions.
